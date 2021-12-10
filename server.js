@@ -14,9 +14,9 @@ import Users from "./Users.js";
 const app = express();
 const port = process.env.PORT || 5000;
 const pusher = new Pusher({
-  appId: "1306334",
-  key: "f9888cea6103efd008ed",
-  secret: "447ee6c75d91611c04ba",
+  appId: "1313330",
+  key: "7b837337ccb8aebc6007",
+  secret: "ba5feab47629986b0e11",
   cluster: "ap2",
   useTLS: true,
 });
@@ -32,7 +32,7 @@ db.once("open", () => {
 
     if (change.operationType === "insert") {
       const messageDetails = change.fullDocument;
-      pusher.trigger("messages", "inserted", {
+      pusher.trigger("mern-msg", "inserted", {
         name: messageDetails.name,
         message: messageDetails.message,
         timestamp: messageDetails.timestamp,
