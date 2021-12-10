@@ -25,26 +25,24 @@ const db = Mongoose.connection;
 db.once("open", () => {
   console.log("db connected");
 
-const msgCollection = db.collection("messagecontents");
-const changeStream = msgCollection.watch();
-changeStream.on("change", (change) => {
-  // console.log("a change occured", change);
+  const msgCollection = db.collection("messagecontents");
+  const changeStream = msgCollection.watch();
+  changeStream.on("change", (change) => {
+    console.log("a change occured", change);
 
-  if (change.operationType === "insert") {
-    const messageDetails = change.fullDocument;
-    pusher.trigger("messages", "inserted", {
-      name: messageDetails.name,
-      message: messageDetails.message,
-      timestamp: messageDetails.timestamp,
-      recieved: messageDetails.recieved,
-    });
-  } else {
-    console.log("error triggering pusher");
-  }
-}
-);
+    if (change.operationType === "insert") {
+      const messageDetails = change.fullDocument;
+      pusher.trigger("messages", "inserted", {
+        name: messageDetails.name,
+        message: messageDetails.message,
+        timestamp: messageDetails.timestamp,
+        recieved: messageDetails.recieved,
+      });
+    } else {
+      console.log("error triggering pusher");
+    }
+  });
 });
-
 //middleware
 app.use(express.json());
 app.use(cors());
