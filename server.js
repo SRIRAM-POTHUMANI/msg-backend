@@ -13,37 +13,37 @@ import Users from "./Users.js";
 //app config
 const app = express();
 const port = process.env.PORT || 5000;
-// const pusher = new Pusher({
-//   appId: "1306334",
-//   key: "f9888cea6103efd008ed",
-//   secret: "447ee6c75d91611c04ba",
-//   cluster: "ap2",
-//   useTLS: true,
-// });
+const pusher = new Pusher({
+  appId: "1306334",
+  key: "f9888cea6103efd008ed",
+  secret: "447ee6c75d91611c04ba",
+  cluster: "ap2",
+  useTLS: true,
+});
 
 const db = Mongoose.connection;
 db.once("open", () => {
   console.log("db connected");
-});
-// const msgCollection = db.collection("messagecontents");
-// const changeStream = msgCollection.watch();
-// changeStream.on("change", (change) => {
-//   // console.log("a change occured", change);
 
-//   if (change.operationType === "insert") {
-//     const messageDetails = change.fullDocument;
-//     pusher.trigger("messages", "inserted", {
-//       name: messageDetails.name,
-//       message: messageDetails.message,
-//       timestamp: messageDetails.timestamp,
-//       recieved: messageDetails.recieved,
-//     });
-//   } else {
-//     console.log("error triggering pusher");
-//   }
-// }
-// );
-// });
+const msgCollection = db.collection("messagecontents");
+const changeStream = msgCollection.watch();
+changeStream.on("change", (change) => {
+  // console.log("a change occured", change);
+
+  if (change.operationType === "insert") {
+    const messageDetails = change.fullDocument;
+    pusher.trigger("messages", "inserted", {
+      name: messageDetails.name,
+      message: messageDetails.message,
+      timestamp: messageDetails.timestamp,
+      recieved: messageDetails.recieved,
+    });
+  } else {
+    console.log("error triggering pusher");
+  }
+}
+);
+});
 
 //middleware
 app.use(express.json());
